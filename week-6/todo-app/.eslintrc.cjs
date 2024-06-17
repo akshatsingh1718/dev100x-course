@@ -17,5 +17,9 @@ module.exports = {
       'warn',
       { allowConstantExport: true },
     ],
+    
   },
+  "overrides": {
+    "tsdx/typescript": "^4.7.4",
+   }
 }

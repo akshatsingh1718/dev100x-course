@@ -76,3 +76,79 @@
 ## Other
 
 - In dev dependencies, we have things which needs to be present while in development environment. Eg.- like vite, we only need vite while development and not on production.
+
+# Week-6
+
+## React Hooks
+
+## Key
+
+- A `unique key` should always be there for components.
+- It optimizes the rerendering.
+- Do not provide index from a loop to the key else that will not tell the the true key related specifically to that entry and re rendering will still be in-optimal.
+
+## Wrapper
+
+- A value of `children` will be passed as prop to children component.
+
+```tsx
+const CardWrapper = ({children}) => <div>{children}</div>
+<CardWrapper>Hello world</CardWrapper>
+```
+
+## useEffect
+
+- Life cycle component.
+- Async function are not allowed.
+- `useAsyncEffect` can module can be used to use async function.
+
+## Other
+
+- Tick "Highlight component when re-render" in dev tools >> components >> settings >> Highlight component when re-render. When the re-renders happen a visual highlight will occur on things where our components has been re rendered.
+
+- Use the state in the lowest ancestor since the state change will rerender the whole thing along with the components which may or maynot use the state.
+
+- **React.memo** : To skip re rendering if the parent is change but the child does not then use `React.memo()`.
+
+- `StrictMode` for development.
+
+- If we are passing a dependency like todo id to component `TodoFromId` and we are using key={todoId} to re render the component then it will re run 2 times.
+
+## useMemo [see code](./week-6/todo-app/src/components/MemoApp.tsx)
+
+- Creates a variable which is not a state variable.
+- Saves earlier computed values.
+- If a state variable is changed and it causes a useeffect to happen and we also change another state in useeffect then it can lead to 2 renders.
+- It will only recompute if the dependency changes.
+- Note That it will not save the output but only change the value if dependency changes even if other state variable changes and re render the component but still the usememo variable will be unchanged (usememo will not call the fun) and maintain its prv value across re renders.
+- Use this when something sync is dependent on some other sync.
+
+## useCallback
+
+- This is when a function input changes.
+- It is used to memoize function, which can help in optimizing the performance of your application, especially in cases involving child components that rely on reference equality to prevent unnecessary renders.
+- If a simple non state var like datatype as string or int is changing in the parent then passing it to the child will not cause re render since the value is not being changed. But if the value if complex like obj or function then the re render on parent will also cause the re render of child even after using memo since the re render of parent will change the address of obj and func's.
+
+## Side effects
+
+- setTimeout, setInterval, fetch
+- Generally side-effects occur inside useEffect hook.
+
+
+## Re conciliation
+
+- re rendering and computing all the logic provided by developer to react.
+
+## useRef
+
+- Referencing a dom element.
+- Sort of like assigning an Id to a component in the react way.
+
+
+# Week-7
+
+## Prop drilling
+
+- When we pass props down from parent to deep child component. Also true: Passing props is a great way to explicitly pipe data through your UI tree to the components that use it.
+- Prop drilling is not a bad practice but it is not visually appealing. 
+- Using `Context API` will push your state management outside the core react components. 

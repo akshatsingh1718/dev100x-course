@@ -134,7 +134,6 @@ const CardWrapper = ({children}) => <div>{children}</div>
 - setTimeout, setInterval, fetch
 - Generally side-effects occur inside useEffect hook.
 
-
 ## Re conciliation
 
 - re rendering and computing all the logic provided by developer to react.
@@ -144,11 +143,141 @@ const CardWrapper = ({children}) => <div>{children}</div>
 - Referencing a dom element.
 - Sort of like assigning an Id to a component in the react way.
 
-
 # Week-7
+
+## useNavigate [see](./week-7/Test/src/components/NavigateExample.tsx)
+
+- Use to define client side routes.
+
+## LazyLoading
+
+- use to load components lazy and not send all the data on the first request.
 
 ## Prop drilling
 
 - When we pass props down from parent to deep child component. Also true: Passing props is a great way to explicitly pipe data through your UI tree to the components that use it.
-- Prop drilling is not a bad practice but it is not visually appealing. 
-- Using `Context API` will push your state management outside the core react components. 
+- Prop drilling is not a bad practice but it is not visually appealing.
+- Using `Context API` will push your state management outside the core react components.
+
+## useContext
+
+- to create a global state variable, like themes, user preferences.
+- Just to make syntax cleaner and not for better performance.
+- The downside is the child wrapped inside the provider will also re-render even if they are not using any context.
+
+In React, when using the `useContext` hook, any change to the context value will cause all components that consume this context to re-render. This includes all components that are descendants of the provider and use the context value. Here's a more detailed explanation:
+
+### Context and Re-rendering
+
+1. **Context Provider and Consumers**:
+
+   - The `Context.Provider` component provides a context value to all its descendants.
+   - Any component that calls `useContext(MyContext)` will subscribe to the context value provided by `MyContext.Provider`.
+
+2. **Updating Context**:
+   - When the context value changes (for instance, via a state change in the parent component that holds the context value), all components that consume this context will re-render.
+   - The below image shows how all the components will re render by clicking the increase or decrease button. This will be fixed by using `recoil`.
+     ![alt text](assets/image.png)
+
+### Example
+
+Here’s a simplified example to illustrate this:
+
+```jsx
+import React, { createContext, useState, useContext } from "react";
+
+// Create a context
+const MyContext = createContext();
+
+const MyProvider = ({ children }) => {
+  const [value, setValue] = useState("Initial value");
+
+  return (
+    <MyContext.Provider value={{ value, setValue }}>
+      {children}
+    </MyContext.Provider>
+  );
+};
+
+const ChildComponent = () => {
+  const { value, setValue } = useContext(MyContext);
+
+  return (
+    <div>
+      <p>Value: {value}</p>
+      <button onClick={() => setValue("Updated value")}>Update Value</button>
+    </div>
+  );
+};
+
+const AnotherChildComponent = () => {
+  const { value } = useContext(MyContext);
+
+  return <p>Another component with value: {value}</p>;
+};
+
+const App = () => (
+  <MyProvider>
+    <ChildComponent />
+    <AnotherChildComponent />
+  </MyProvider>
+);
+
+export default App;
+```
+
+### What Happens Here:
+
+1. **Initial Render**:
+
+   - `MyProvider` provides the initial context value (`'Initial value'`).
+   - `ChildComponent` and `AnotherChildComponent` both consume the context value and render with `'Initial value'`.
+
+2. **Updating the Context**:
+
+   - When the button in `ChildComponent` is clicked, it calls `setValue('Updated value')`.
+   - This updates the context value.
+
+3. **Re-rendering**:
+   - Both `ChildComponent` and `AnotherChildComponent` will re-render with the new context value (`'Updated value'`).
+
+### Conclusion
+
+Whenever you update a context value in React, all components that consume that context (via `useContext`) will re-render. This is because React has to ensure that the latest context value is propagated to all consumers, ensuring consistent state across your application. If you have performance concerns, you might need to consider optimizations such as memoization (`React.memo`), or context partitioning to limit the re-renders only to the components that really need to react to the context change.
+
+## Recoil
+
+- The child wrapped inside the provider will not re-render if state is updated by some other child.
+- The state logic is outside of your main component logic.
+
+### Hooks
+
+- useRecoilState: get the state.
+- useRecoilValue: get the state value.
+- useSetRecoilValue: get the set state fn.
+
+### Selectors
+
+- `state s1` -> `Component` -> `create other state or var from s1`.
+- A selector represents a piece of derived state. You can think of derived state as the output of passing state to a pure function that derives a new value from the said state.
+- When a thing is being derived directly from a bunch of states then use selectors.
+- Selector can be dependent on other selectors as well.
+- Example: When working with Todos application there are 2 states: todos and filter and their filtered-todos is a new value derived from the 2 states which can be used as a selector.
+
+### Async data queries [see](./week-7/recoilStateManagement/src/components/AsyncQueriesExample.tsx)
+
+- When atom needs to set with a default value using an async call (db call, web call).
+
+### Todo Family
+
+- when you want to have separate atoms for each content like a single todo.
+
+### useRecoilStateLoadable, useRecoilValueLoadable [see](./week-7/recoilStateManagement//src/components/AtomFamLoadableExample.tsx)
+
+- This will return an object with state which tells us that if the fetching of records is loading, hasValue or hasError.
+- This will also prevent it from crashing when using async fun in atom and api crashes then axios raises the error which this hook will catch and make the state== "hasError"
+
+### Context and Re-rendering
+
+- The following image shows how clicking on the increase or decrease button will not re-render all the components but only the updating state component which is showing the counter value.
+  ![alt text](assets/image-2.png)

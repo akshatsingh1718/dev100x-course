@@ -281,3 +281,69 @@ Whenever you update a context value in React, all components that consume that c
 
 - The following image shows how clicking on the increase or decrease button will not re-render all the components but only the updating state component which is showing the counter value.
   ![alt text](assets/image-2.png)
+
+# Week-8
+
+## Tailwind css
+
+- Mobile first.
+- If using a breakpoint such as md, sm or xl then effects will turn on for gt breakpoint and not less than breakpoint value.
+
+## Axios and Fetch
+
+### Axios
+
+- external library.
+- https://httpdump.app: http dump is a website which lets us dump http request.
+
+# Week-9 - Hooks
+
+## useEffect mount and unmount functionality
+
+```jsx
+useEffect(
+  () => {
+    console.log("component mounted"); // code 1
+
+    return () => {
+      console.log("component mounted"); // code 2
+    };
+  },
+  [todos] // code 3
+);
+```
+
+The above use effect will first run the `code1` on dependency changes or 1st component mount and then when its triggered 2nd time or component unmounts then first the cleanup code will run which is `code2` and then `code1` runs.
+
+## Data fetching hooks
+
+- Instead of fetching data directly from a component create a custom hook to fetch data.
+- `swr` is a library to do the same for auto refreshing, is loading and other functionalities.
+
+```jsx
+// create a custom hook to fetch todos
+const useTodos = () => {
+  const [todos, setTodos] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get("https://sum-server.100xdevs.com/todos")
+      .then((res) => setTodos(res.data.todos));
+  }, []);
+
+  return todos;
+};
+
+// directly include useTodos in the component
+const Todos = () => {
+  const todos = useTodos();
+
+  return (
+    <>
+      {todos.map((t) => (
+        <Track todo={todo} />
+      ))}
+    </>
+  );
+};
+```

@@ -651,3 +651,98 @@ handleEvent("click"); // ok
 -   Website: turbo.build
 -   Turbo is an incremental bundler and build system optimized for JavaScript and TypeScript, written in Rust.
 -   command: `npx create-turbo@latest`
+-   The following project will have docs and web app and some packages like ui.
+-   Run the `npm run dev` on the top folder to start both the app or change dir to the respective directories to run separately.
+
+## Docker
+
+-   Link: [see](https://projects.100xdevs.com/tracks/docker-easy/docker-6)
+-   check using `docker run hello-world`
+-   docker is just containers running mini machines network / filesystems.
+-   on my pc i can start a postgres, mongo and nodejs containers.
+-   like github we can push code / image to registries like docker hub, google registry, aws reg. so that other people can run these images.
+-   If MongoDB image is uploaded that may need mongo + cpp + python and can be run using a container. Just like an iso image is need to install ubuntu that has all the dependencies.
+
+### Docker Mongo DB
+
+-   use `docker run mongo` to run mongo db locally.
+-   If you try to connect to `mongodb://localhost:27017` using mongo compass it will not connect since we started the container for mongo on container which is listening to its port 27017 and not our machines port and we need to map it.
+-   To map containers port to our machines port we need to use the following cmd:
+    `docker run -p [system-port]:[container-port] [image-name]`
+    `docker run -p 27017:27017 mongo`
+-   use `-d` to run in detached mode
+    `docker run -d -p 27017:27017 mongo`
+-   use `docker ps` to get all the running docker images.
+-   use `docker kill [container-id]` to stop container running in detached mode.
+
+## SQL databases
+
+-   Connect to Postgres sql. Even thought we dont have psql in our system we can connect to the bash of our container and run psql there to connect to the sql.
+
+```bash
+ ~  docker run -e POSTGRES_PASSWORD=mysecretpassword -d -p 5432:5432 postgres                                   ✔
+fb35011d9dbbb1a03916cdf8c7ecb64664dd980f2c5f74c4e0c70756939e6945
+
+ ~  docker ps                                                                                                   ✔
+CONTAINER ID   IMAGE      COMMAND                  CREATED          STATUS          PORTS                                       NAMES
+fb35011d9dbb   postgres   "docker-entrypoint.s…"   11 seconds ago   Up 10 seconds   0.0.0.0:5432->5432/tcp, :::5432->5432/tcp   busy_leavitt
+
+ ~  docker exec -it fb35011d9dbb /bin/bash                                                                                                                                               ✔
+root@fb35011d9dbb:/# ls
+bin  boot  dev	docker-entrypoint-initdb.d  etc  home  lib  lib64  media  mnt  opt  proc  root	run  sbin  srv	sys  tmp  usr  var
+root@fb35011d9dbb:/# psql
+psql: error: connection to server on socket "/var/run/postgresql/.s.PGSQL.5432" failed: FATAL:  role "root" does not exist
+root@fb35011d9dbb:/#
+```
+
+### SQL Joins
+
+-   Inner join and join are both same and will return matches in both the tables.
+
+    ```sql
+    SELECT u.id, u.username, u.email, a.city, a.country, a.street, a.pincode
+    FROM users u
+    JOIN addresses a ON u.id = a.user_id
+    WHERE u.id = $1
+    ```
+
+-   left join will return all the rows from left table and matched rows from the right table. If you are also using a where clause then it may happen that only the matched rows will be returned.
+
+```sql
+
+postgres=# select u.username, u.email, a.city, a.country, a.street, a.pincode from users u LEFT JOIN addresses a ON u.id = a.user_id WHERE u.id = 7;
+ username |      email       | city | country | street | pincode
+----------+------------------+------+---------+--------+---------
+ akshat   | akshat@gmail.com |      |         |        |
+(1 row)
+
+postgres=# SELECT users.username, addresses.city, addresses.country, addresses.street, addresses.pincode
+FROM users
+LEFT JOIN addresses ON users.id = addresses.user_id;
+ username |   city   | country |     street      | pincode
+----------+----------+---------+-----------------+---------
+ akshat3  | New York | USA 2   | 123 Broadway St | 10001
+ akshat2  |          |         |                 |
+ akshat   |          |         |                 |
+(3 rows)
+
+```
+
+-   Right join is when you want all the rows from right table and only matching rows from the left table. In the users and addresses relationship it will not be helpfull since there will always a user for a given address given a foreign key constraint.
+
+-   Full join will return all the rows from left and right table. It is the combination of left and right join. You can also use where clause to further filter out.
+
+# Week-14 (Next.js)
+
+##
+
+## (Backend) Async Components
+
+-   Fetching data.
+-   For doing async fun calling inside.
+
+## (Backend) Routes
+
+-   Create api folder.
+-   Create dir inside api dir to create route eg.- user
+-   Inside user create route.ts and inside declare GET, PUT, POST functions.
